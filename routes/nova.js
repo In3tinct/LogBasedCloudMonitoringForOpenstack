@@ -22,9 +22,16 @@ client.ping({
 /* GET home page. */
 
 function fetchNovaLogs(req,res){
-    console.log("HERER");
+    var MyDate = new Date();
+    var MyDateString;
+
+    MyDateString =MyDate.getFullYear()+'.'+('0' + (MyDate.getMonth()+1)).slice(-2)+'.'+('0' + MyDate.getDate()).slice(-2);
+    console.log(MyDateString);
+
+    var index='novaindex-'+MyDateString;
+    console.log(index);
     client.search({
-        index: 'nova_index',
+        index: index,
         q: '*',
         sort: '@timestamp:desc',
         size: '5',
