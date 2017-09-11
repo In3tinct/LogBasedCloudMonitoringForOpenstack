@@ -23,9 +23,16 @@ client.ping({
 
 function fetchNovaLogs(req,res){
     var MyDate = new Date();
+    var isoDate = new Date(MyDate).toISOString();
     var MyDateString;
 
-    MyDateString =MyDate.getFullYear()+'.'+('0' + (MyDate.getMonth()+1)).slice(-2)+'.'+('0' + MyDate.getDate()).slice(-2);
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+
+
+    MyDateString =year+'.'+('0' + month).slice(-2)+'.'+('0' + day).slice(-2);
     console.log(MyDateString);
 
     var index='novaindex-'+MyDateString;
