@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const stripAnsi = require('strip-ansi');
 
 var elasticsearch = require('elasticsearch');
 
@@ -44,7 +45,10 @@ function fetchNovaLogs(req,res){
         size: '5',
         pretty: true
     }).then(function (body) {
-        var hits = body.hits.hits;
+        var hits = body.hits.hits["0"]._source.message["1"];
+        //Since i was getting unicode and ansi code characters with the message i am striping those
+        //so we can show only the ascii characters on the UI
+        console.log(stripAnsi(hits));
         console.log("Successfull");
         res.send(JSON.stringify(hits));
     }, function (error) {
