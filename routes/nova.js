@@ -32,28 +32,33 @@ function fetchNovaLogs(req,res){
     var day = dateObj.getUTCDate();
     var year = dateObj.getUTCFullYear();
 
-
     MyDateString =year+'.'+('0' + month).slice(-2)+'.'+('0' + day).slice(-2);
     console.log(MyDateString);
 
     var index='novaindex-'+MyDateString;
     console.log(index);
-    client.search({
-        index: index,
-        q: '*',
-        sort: '@timestamp:desc',
-        size: '5',
-        pretty: true
-    }).then(function (body) {
-        var hits = body.hits.hits["0"]._source.message["1"];
-        //Since i was getting unicode and ansi code characters with the message i am striping those
-        //so we can show only the ascii characters on the UI
-        console.log(stripAnsi(hits));
-        console.log("Successfull");
-        res.send(JSON.stringify(hits));
-    }, function (error) {
-        console.trace(error.message);
-    });
+        client.search({
+            index: index,
+            q: '*',
+            sort: '@timestamp:desc',
+            size: '5',
+            pretty: true
+        }).then(function (body) {
+            var hits=body.hits.hits;
+            var result=[];
+            for (var i=0; i<hits.length;i++){
+                result.push(stripAnsi(hits[i]._source.message[1]));
+            }
+
+            //Since i was getting unicode and ansi code characters with the message i am striping those
+            //so we can show only the ascii characters on the UI
+            //console.log(stripAnsi(hits));
+            console.log("Successful");
+            res.send(JSON.stringify(result));
+        }, function (error) {
+            console.trace(error.message);
+        });
+
 
 }
 
@@ -61,8 +66,7 @@ exports.fetchNovaLogs=fetchNovaLogs;
 
 
 function nova(req,res){
-        //Set these headers to notify the browser not to maintain any cache for the page being loaded
-        res.render("nova-cpu",{username:"abc"});
+    res.render("nova-cpu",{username:"abc"});
 }
 
 
