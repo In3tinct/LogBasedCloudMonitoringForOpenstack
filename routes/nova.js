@@ -41,13 +41,22 @@ function fetchNovaLogs(req,res){
             index: index,
             q: '*',
             sort: '@timestamp:desc',
-            size: '5',
+            size: '10',
             pretty: true
         }).then(function (body) {
             var hits=body.hits.hits;
             var result=[];
+
+            //Creating a json object with timestamp, loglevel and message
+            var jsonObject={};
             for (var i=0; i<hits.length;i++){
-                result.push(stripAnsi(hits[i]._source.message[1]));
+                var strippedMessage= stripAnsi(hits[i]._source.message[1]);
+
+                var loglevel=strippedMessage.substr(0,strippedMessage.indexOf(' '));
+                var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
+
+                jsonObject={"timestamp":hits[i]._source.timestamp, "loglevel":loglevel, "message":message};
+                result.push(jsonObject);
             }
 
             //Since i was getting unicode and ansi code characters with the message i am striping those
@@ -66,7 +75,7 @@ exports.fetchNovaLogs=fetchNovaLogs;
 
 
 function nova(req,res){
-    res.render("nova-cpu",{username:"abc"});
+    res.render("Nova.ejs",{username:"abc"});
 }
 
 
