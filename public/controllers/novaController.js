@@ -9,7 +9,6 @@ app.controller('novaController',function($scope,$http) {
             method : "GET",
             url : "/fetchnova"
         }).success(function(data){
-            alert(data);
             $scope.data=data;
         })
     }, 10000);
