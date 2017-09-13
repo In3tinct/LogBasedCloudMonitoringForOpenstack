@@ -20,6 +20,10 @@ client.ping({
     }
 });
 
+//creating this array as a global variable because we need to save the previous errors as well
+//if we keep it inside the function it will get erased each time
+var resultForErrorsTable=[];
+
 /* GET home page. */
 
 function fetchNovaLogs(req,res){
@@ -45,7 +49,8 @@ function fetchNovaLogs(req,res){
             pretty: true
         }).then(function (body) {
             var hits=body.hits.hits;
-            var result=[];
+            var resultForCommontable=[];
+
 
             //Creating a json object with timestamp, loglevel and message
             var jsonObject={};
@@ -54,16 +59,27 @@ function fetchNovaLogs(req,res){
 
                 var loglevel=strippedMessage.substr(0,strippedMessage.indexOf(' '));
                 var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
+                var timestamp=hits[i]._source.timestamp;
 
-                jsonObject={"timestamp":hits[i]._source.timestamp, "loglevel":loglevel, "message":message};
-                result.push(jsonObject);
+                if(loglevel==="ERROR" || loglevel==="WARNING"){
+                    jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
+                    resultForErrorsTable.push(jsonObject);
+
+                    //Deleting old entries, as we only want to keep this table of length 10
+                    if (resultForErrorsTable.length>10){
+                        resultForErrorsTable.shift();
+                    }
+                }
+
+                jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
+                resultForCommontable.push(jsonObject);
             }
 
             //Since i was getting unicode and ansi code characters with the message i am striping those
             //so we can show only the ascii characters on the UI
             //console.log(stripAnsi(hits));
             console.log("Successful");
-            res.send(JSON.stringify(result));
+            res.send({"errortable":resultForErrorsTable,"commontable":resultForCommontable});
         }, function (error) {
             console.trace(error.message);
         });
