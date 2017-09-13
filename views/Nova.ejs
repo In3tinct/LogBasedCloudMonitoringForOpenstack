@@ -73,7 +73,7 @@
             <th><b>Log Level</b></th>
             <th><b>Message</b></th>
             </thead>
-            <tbody ng-repeat="x in data">
+            <tbody ng-repeat="x in data.errortable">
             <tr class="info" >
                 <td>{{x.timestamp}}</td>
                 <td>{{x.loglevel}}</td>
@@ -94,7 +94,7 @@
                         <th><b>Log Level</b></th>
                         <th><b>Message</b></th>
                     </thead>
-                    <tbody ng-repeat="x in data">
+                    <tbody ng-repeat="x in data.commontable">
                     <tr class="info" >
                         <td>{{x.timestamp}}</td>
                         <td>{{x.loglevel}}</td>
