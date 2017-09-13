@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:http="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" ng-app="neutronApp">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Neutron</title>
+    <title>Nova</title>
     <meta name="description" content="OpenStack Components">
 
     <!-- Latest compiled and minified CSS -->
@@ -22,6 +22,14 @@
 
     </style>
 
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script
+            src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+    <script src="./controllers/neutronController.js"> </script>
+
 </head>
 
 <body>
@@ -29,23 +37,25 @@
 <header>
     <div class="jumbotron">
         <div class="container">
-            <h1>Neutron</h1>
+            <h1>Nova</h1>
             <h3>OpenStack Components</h3>
         </div>
     </div>
 </header>
+
+
 <div class="container">
     <ul class="nav nav-pills nav-justified">
-        <li class="active"><a href="#Neutron" data-toggle="tab">Neutron</a></li>
-        <li><a href="#Nova" data-toggle="tab">Nova</a></li>
+        <li class="active"><a href="#Nova" data-toggle="tab">Nova</a></li>
+        <li><a href="#Neutron" data-toggle="tab">Neutron</a></li>
         <li><a href="#Cinder" data-toggle="tab">Cinder</a></li>
         <li><a href="#Home" data-toggle="tab">Home</a></li>
     </ul>
 
     <div class="tab content">
-        <div class="tab-pane fade in active" id="Neutron">
+        <div class="tab-pane fade in active" id="Nova">
         </div>
-        <div class="tab-pane fade"id="Nova">
+        <div class="tab-pane fade"id="Neutron">
         </div>
         <div class="tab-pane fade"id="Cinder">
         </div>
@@ -55,122 +65,49 @@
 </div>
 
 
-
-
-<div class="container">
+<div class="container" ng-controller="neutronController">
     <div class="well">
         <table class="table table-striped table-bordered table-hover datatable">
-            <tr>
-                <td><b>Time</b></td>
-                <td><b>Log Level</b></td>
-                <td><b>Message</b></td>
-            </tr>
-            <tr class="info">
-                <td>2</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>2</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>3</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>4</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>5</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>6</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>7</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>8</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>9</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>10</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>11</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>12</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>13</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>14</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>15</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>16</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>17</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>18</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
-                <td>19</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="danger">
-                <td>20</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr class="info">
+            <thead>
+            <th><b>Time</b></th>
+            <th><b>Log Level</b></th>
+            <th><b>Message</b></th>
+            </thead>
+            <tbody ng-repeat="x in data">
+            <tr class="info" >
+                <td>{{x.timestamp}}</td>
+                <td>{{x.loglevel}}</td>
+                <td>{{x.message}}</td>
             </tr>
 
+            </tbody>
         </table>
     </div>
 </div>
+
+
+<div class="container" ng-controller="novaController">
+    <div class="well">
+        <table class="table table-striped table-bordered table-hover datatable">
+            <thead>
+            <th><b>Time</b></th>
+            <th><b>Log Level</b></th>
+            <th><b>Message</b></th>
+            </thead>
+            <tbody ng-repeat="x in data">
+            <tr class="info" >
+                <td>{{x.timestamp}}</td>
+                <td>{{x.loglevel}}</td>
+                <td>{{x.message}}</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
 
 
 <footer>
