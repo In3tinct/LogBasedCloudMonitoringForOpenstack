@@ -14,6 +14,8 @@ var app = express();
 
 var forNova=require('./routes/nova');
 
+var forSearch=require('./routes/search');
+
 var forNeutron=require('./routes/neutron');
 
 // view engine setup
@@ -36,6 +38,9 @@ app.get('/fetchnova', forNova.fetchNovaLogs);
 
 app.get('/neutron', forNeutron.neutron);
 app.get('/fetchneutron', forNeutron.fetchNeutronLogs);
+
+app.get('/searchlog',forSearch.search);
+app.post('/search',forSearch.fetchNeutronLogs);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
