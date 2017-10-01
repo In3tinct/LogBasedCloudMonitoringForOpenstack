@@ -44,16 +44,16 @@ var blockStorageClient = pkgcloud.blockstorage.createClient({
     authUrl: 'http://130.65.159.143:5000'
 });
 
-giveCurlCommands();
+fetchingKeyStoneToken();
 
 var elasticsearch = require('elasticsearch');
 var elasticsearchWatcher = require('elasticsearch-watcher');
 
-/*var client = new elasticsearch.Client({
+var client = new elasticsearch.Client({
     plugins: [ elasticsearchWatcher ],
     host: 'http://130.65.159.143:9200',
     log: 'trace'
-});*/
+});
 
 /*client.watcher.putWatch([{
     "input" : {
@@ -186,7 +186,7 @@ function fetchInfoForHomePage(req,res){
 exports.fetchInfoForHomePage=fetchInfoForHomePage;
 
 
-function fetchingMaxAllowedValues(){
+function fetchingKeyStoneToken(){
 
     var postdata= {
         "auth": {
