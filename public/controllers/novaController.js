@@ -11,7 +11,7 @@ app.controller('novaController',function($scope,$http) {
         }).success(function(data){
             $scope.data=data;
         })
-    }, 10000);
+    }, 5000);
 
 });
 

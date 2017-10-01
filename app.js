@@ -14,7 +14,11 @@ var app = express();
 
 var forNova=require('./routes/nova');
 
+var forSearch=require('./routes/search');
+
 var forNeutron=require('./routes/neutron');
+
+var forHome=require('./routes/home');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
