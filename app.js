@@ -18,6 +18,8 @@ var forSearch=require('./routes/search');
 
 var forNeutron=require('./routes/neutron');
 
+var forHome=require('./routes/home');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -38,9 +40,6 @@ app.get('/fetchnova', forNova.fetchNovaLogs);
 
 app.get('/neutron', forNeutron.neutron);
 app.get('/fetchneutron', forNeutron.fetchNeutronLogs);
-
-app.get('/searchlog',forSearch.search);
-app.post('/search',forSearch.fetchNeutronLogs);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
