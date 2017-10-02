@@ -49,11 +49,12 @@
                   <th><b>Log Level</b></th>
                   <th><b>Message</b></th>
                   </thead>
-                  <tbody ng-repeat="x in data.commontable">
+                  <tbody ng-repeat="x in data.infoMessageForHomePage">
                   <tr class="info" >
                       <td>{{x.timestamp}}</td>
                       <td>{{x.loglevel}}</td>
                       <td>{{x.message}}</td>
+                      <td>{{x.instanceIp}}</td>
                   </tr>
 
                   </tbody>
