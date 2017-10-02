@@ -44,7 +44,6 @@ var blockStorageClient = pkgcloud.blockstorage.createClient({
     authUrl: 'http://130.65.159.143:5000'
 });
 
-fetchingKeyStoneToken();
 
 var elasticsearch = require('elasticsearch');
 var elasticsearchWatcher = require('elasticsearch-watcher');
@@ -96,25 +95,40 @@ client.ping({
 });
 
 
-function totalVolumesUsed(){
 
-    blockStorageClient.getVolumes(function (err, volumes) {
+//var serversList;
+var serversList;
+function getServersList(callback){
+
+    novaClient.getServers(function (err, servers) {
         if (err) {
             console.dir(err);
             return;
+        }else{
+            serversList= servers;
         }
-        console.log(volumes);
     });
+
+    /*while(serversList === undefined) {
+        require('deasync').runLoopOnce();
+    }
+    return serversList;*/
+
 
 }
 
-
-
 /* GET home page. */
+//Making it a global variable but once the date changes, index changes and for the current index
+//There may not be any entry for new instaces, So this will save the old entries as well
+//from the time when server was started
+
 
 function fetchInfoForHomePage(req,res){
 
+    //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
+    getServersList();
 
+    var infoMessageForHomePage=[];
     var MyDate = new Date();
     var isoDate = new Date(MyDate).toISOString();
     var MyDateString;
@@ -137,36 +151,45 @@ function fetchInfoForHomePage(req,res){
         pretty: true
     }).then(function (body) {
         var hits=body.hits.hits;
-        var infoMessageForHomePage=[];
 
 
         //Creating a json object with timestamp, loglevel and message
         var jsonObject={};
         for (var i=0; i<hits.length;i++){
+
+            if(serversList===undefined){
+                break;
+            }
+
             var strippedMessage= stripAnsi(hits[i]._source.message[1]);
 
             var loglevel=strippedMessage.substr(0,strippedMessage.indexOf(' '));
             var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
+
+            //If the instance is not already mapped into the array then only we go ahead else we go to next iteration
+            /*if(!infoMessageForHomePage.messsage.indexOf(message)===-1){
+                continue;
+            }*/
+
             var timestamp=hits[i]._source.timestamp;
+            var instanceIp;
 
             //1) If a new instance is created
             if(loglevel==="INFO"){
-                jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
-                infoMessageForHomePage.push(jsonObject);
+
                 var instanceName= message.split("instance: ", 3)[1].split("]")[0];
 
-                //Fetching the details of the servers(instances) to match the instance ID with the  IP address
-                novaClient.getServers(function (err, servers) {
-                    if (err) {
-                        console.dir(err);
-                        return;
-                    }
-                    for (var i=0;i<servers.length;i++){
-                        if (servers[i].id==instanceName){
-                            servers[i].addresses.private[1].addr;
+                //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
+                    for (var i=0;i<serversList.length;i++){
+                        if (serversList[i].id===instanceName){
+                            instanceIp=serversList[i].addresses.private[1].addr;
+                            jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message, "instanceIp":instanceIp};
+                            infoMessageForHomePage.push(jsonObject);
+                            instanceIp="";
+                            break;
                         }
                     }
-                });
+
             }
 
         }
@@ -186,7 +209,24 @@ function fetchInfoForHomePage(req,res){
 exports.fetchInfoForHomePage=fetchInfoForHomePage;
 
 
-function fetchingKeyStoneToken(){
+function totalVolumesUsed(callback){
+
+    process.nextTick(function(){
+    blockStorageClient.getVolumes(function (err, volumes) {
+        if (err) {
+            console.dir(err);
+            return;
+        }
+        console.log(volumes);
+    });
+    })
+}
+
+
+var Sync = require('sync');
+
+function fetchingKeyStoneToken(a, b, callback){
+
 
     var postdata= {
         "auth": {
@@ -205,30 +245,71 @@ function fetchingKeyStoneToken(){
         body: postdata
     };
 
+    process.nextTick(function(){
+
+        request(options, function (err, res, body) {
+            if (err) {
+                console.error('error posting json: ', err)
+                throw err
+            }
+            /*var headers = res.headers
+            var statusCode = res.statusCode
+            console.log('headers: ', headers)
+            console.log('statusCode: ', statusCode)
+            console.log('body: ', body)*/
+
+            callback(null, res.body.access.token.id);
+        })
+
+    })
+}
+
+
+function homePageLimits(keystoneToken,callback){
+    var options = {
+        url: 'http://130.65.159.143:8774/v2/ab40cc4abd5d40319bdd1c4447eb07d2/limits',
+        method: 'GET',
+        headers: {'content-type': 'application/json', 'X-Auth-Token':keystoneToken},
+        json: true
+    };
+
+    process.nextTick(function(){
     request(options, function (err, res, body) {
         if (err) {
             console.error('error posting json: ', err)
             throw err
         }
-        var headers = res.headers
+       /* var headers = res.headers
         var statusCode = res.statusCode
         console.log('headers: ', headers)
         console.log('statusCode: ', statusCode)
-        console.log('body: ', body)
+        console.log('body: ', body)*/
+        callback(null,res);
+        })
+    })
+
+}
+
+var username;
+
+function common(){
+    Sync(function() {
+
+        // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context
+        var result = fetchingKeyStoneToken.sync(null, 2, 3);
+        console.log(result);
+        var res=homePageLimits.sync(null,result);
+        console.log(res);
+        //totalVolumesUsed();
+
+
     })
 
 }
 
 
-
-
-
-
-
-
-
 function home(req,res){
-    res.render("Home.ejs",{username:"abc"});
+    res.render("Home.ejs", {username: "abc"});
 }
 
 
