@@ -218,7 +218,7 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for instances, Need to remove the hardcoding
         var instanceAlert=false;
-        if(serverList.length==10-1){
+        if(serverList.length==4){
             instanceAlert=true;
         }else{
             instanceAlert=false;
