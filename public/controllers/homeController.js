@@ -8,9 +8,8 @@ app.controller('homeController',function($scope,$http) {
             method : "GET",
             url : "/fetchInfoForHomePage"
         }).success(function(data){
-            alert(data);
             $scope.data=data;
         })
-    }, 10000);
+    }, 5000);
 
 });
