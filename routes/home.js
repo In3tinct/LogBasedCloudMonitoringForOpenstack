@@ -13,11 +13,12 @@ var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
 
+
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
     provider: 'openstack',
     username: 'admin',
-    password: 'sjsumaster2017',
+    password: password,
     region: 'RegionOne', //default for DevStack, might be different on other OpenStack distributions
     authUrl: 'http://130.65.159.143:5000'
     });
@@ -26,7 +27,7 @@ var novaClient = pkgcloud.compute.createClient({
 var blockStorageClient = pkgcloud.blockstorage.createClient({
     provider: 'openstack',
     username: 'admin',
-    password: 'sjsumaster2017',
+    password: password,
     region: 'RegionOne', //default for DevStack, might be different on other OpenStack distributions
     authUrl: 'http://130.65.159.143:5000'
 });
@@ -257,7 +258,7 @@ function fetchingKeyStoneToken(a, b, callback){
             "tenantName": "admin",
             "passwordCredentials": {
                 "username": "admin",
-                "password": "sjsumaster2017"
+                "password": password
             }
         }
     };
