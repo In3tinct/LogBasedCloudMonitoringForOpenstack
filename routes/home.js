@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const stripAnsi = require('strip-ansi');
 var request = require('request')
+var Sync = require('sync');
 
 //Api for openstack nova, blockstorage etc.
 var pkgcloud = require('pkgcloud'),
@@ -97,38 +98,25 @@ client.ping({
 
 
 //var serversList;
-var serversList;
+//var serversList;
 function getServersList(callback){
 
-    novaClient.getServers(function (err, servers) {
-        if (err) {
-            console.dir(err);
-            return;
-        }else{
-            serversList= servers;
-        }
+    process.nextTick(function() {
+        novaClient.getServers(function (err, servers) {
+            if (err) {
+                console.dir(err);
+                return;
+            } else {
+                //serversList = servers;
+                callback(null,servers);
+            }
+        });
+
     });
-
-    /*while(serversList === undefined) {
-        require('deasync').runLoopOnce();
-    }
-    return serversList;*/
-
 
 }
 
-/* GET home page. */
-//Making it a global variable but once the date changes, index changes and for the current index
-//There may not be any entry for new instaces, So this will save the old entries as well
-//from the time when server was started
-
-
-function fetchInfoForHomePage(req,res){
-
-    //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
-    getServersList();
-
-    var infoMessageForHomePage=[];
+function infoMessages(serversList,callback){
     var MyDate = new Date();
     var isoDate = new Date(MyDate).toISOString();
     var MyDateString;
@@ -143,70 +131,126 @@ function fetchInfoForHomePage(req,res){
 
     var index='novaindex-'+MyDateString;
     console.log(index);
-    client.search({
-        index: index,
-        q: 'message:*spawned*',
-        sort: '@timestamp:desc',
-        size: '10',
-        pretty: true
-    }).then(function (body) {
-        var hits=body.hits.hits;
 
 
-        //Creating a json object with timestamp, loglevel and message
-        var jsonObject={};
-        for (var i=0; i<hits.length;i++){
+    process.nextTick(function() {
+        client.search({
+            index: index,
+            q: 'message:*spawned*',
+            sort: '@timestamp:desc',
+            size: '10',
+            pretty: true
+        }).then(function (body) {
+            var hits = body.hits.hits;
+            var infoMessageForHomePage=[];
 
-            if(serversList===undefined){
-                break;
-            }
+            //Creating a json object with timestamp, loglevel and message
+            var jsonObject = {};
+            for (var i = 0; i < hits.length; i++) {
 
-            var strippedMessage= stripAnsi(hits[i]._source.message[1]);
+                if (serversList === undefined) {
+                    break;
+                }
 
-            var loglevel=strippedMessage.substr(0,strippedMessage.indexOf(' '));
-            var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
+                var strippedMessage = stripAnsi(hits[i]._source.message[1]);
 
-            //If the instance is not already mapped into the array then only we go ahead else we go to next iteration
-            /*if(!infoMessageForHomePage.messsage.indexOf(message)===-1){
-                continue;
-            }*/
+                var loglevel = strippedMessage.substr(0, strippedMessage.indexOf(' '));
+                var message = strippedMessage.substr(strippedMessage.indexOf(' ') + 1);
 
-            var timestamp=hits[i]._source.timestamp;
-            var instanceIp;
+                //If the instance is not already mapped into the array then only we go ahead else we go to next iteration
+                /*if(!infoMessageForHomePage.messsage.indexOf(message)===-1){
+                    continue;
+                }*/
 
-            //1) If a new instance is created
-            if(loglevel==="INFO"){
+                var timestamp = hits[i]._source.timestamp;
+                var instanceIp;
 
-                var instanceName= message.split("instance: ", 3)[1].split("]")[0];
+                //1) If a new instance is created
+                if (loglevel === "INFO") {
 
-                //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
-                    for (var i=0;i<serversList.length;i++){
-                        if (serversList[i].id===instanceName){
-                            instanceIp=serversList[i].addresses.private[1].addr;
-                            jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message, "instanceIp":instanceIp};
+                    var instanceName = message.split("instance: ", 3)[1].split("]")[0];
+
+                    //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
+                    for (var i = 0; i < serversList.length; i++) {
+                        if (serversList[i].id === instanceName) {
+                            instanceIp = serversList[i].addresses.private[1].addr;
+                            jsonObject = {
+                                "timestamp": timestamp,
+                                "loglevel": loglevel,
+                                "message": message,
+                                "instanceIp": instanceIp
+                            };
                             infoMessageForHomePage.push(jsonObject);
-                            instanceIp="";
+                            instanceIp = "";
                             break;
                         }
                     }
 
+                }
+
             }
 
-        }
+            //Since i was getting unicode and ansi code characters with the message i am striping those
+            //so we can show only the ascii characters on the UI
+            //console.log(stripAnsi(hits));
+            console.log("Successful");
+            callback(null,infoMessageForHomePage);
 
-        //Since i was getting unicode and ansi code characters with the message i am striping those
-        //so we can show only the ascii characters on the UI
-        //console.log(stripAnsi(hits));
-        console.log("Successful");
-        res.send({"infoMessageForHomePage":infoMessageForHomePage});
-    }, function (error) {
-        console.trace(error.message);
+        }, function (error) {
+            console.trace(error.message);
+        });
+
     });
 
+}
+
+/* GET home page. */
+//Making it a global variable but once the date changes, index changes and for the current index
+//There may not be any entry for new instaces, So this will save the old entries as well
+//from the time when server was started
+
+
+function fetchInfoForHomePage(req,res){
+
+    Sync(function() {
+        //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
+        var serverList=getServersList.sync();
+
+        var infoMessageForHomePage=infoMessages.sync(null,serverList);
+
+        var keystonetoken = fetchingKeyStoneToken.sync(null, 2, 3);
+        var limits=homePageLimits.sync(null,keystonetoken);
+
+        var volumesList=totalVolumesUsed.sync();
+
+        var volumeAlert=false;
+        if(volumesList.length==limits.body.quota_set.volumes-1){
+            volumeAlert=true;
+        }else{
+            volumeAlert=false;
+        }
+
+        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert});
+
+    });
 
 }
 
 exports.fetchInfoForHomePage=fetchInfoForHomePage;
+
+function common(){
+    Sync(function() {
+
+        // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context
+        var result = fetchingKeyStoneToken.sync(null, 2, 3);
+        console.log(result);
+        var res=homePageLimits.sync(null,result);
+        console.log(res);
+        //totalVolumesUsed();
+
+    })
+
+}
 
 
 function totalVolumesUsed(callback){
@@ -217,13 +261,14 @@ function totalVolumesUsed(callback){
             console.dir(err);
             return;
         }
+        callback(null, volumes);
         console.log(volumes);
     });
-    })
+    });
 }
 
 
-var Sync = require('sync');
+
 
 function fetchingKeyStoneToken(a, b, callback){
 
@@ -267,7 +312,7 @@ function fetchingKeyStoneToken(a, b, callback){
 
 function homePageLimits(keystoneToken,callback){
     var options = {
-        url: 'http://130.65.159.143:8774/v2/ab40cc4abd5d40319bdd1c4447eb07d2/limits',
+        url: 'http://130.65.159.143:8776/v2/ab40cc4abd5d40319bdd1c4447eb07d2/os-quota-sets/4bd09f787534467eb0dc7f8b2e931a1d?usage=False',
         method: 'GET',
         headers: {'content-type': 'application/json', 'X-Auth-Token':keystoneToken},
         json: true
@@ -292,20 +337,7 @@ function homePageLimits(keystoneToken,callback){
 
 var username;
 
-function common(){
-    Sync(function() {
 
-        // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context
-        var result = fetchingKeyStoneToken.sync(null, 2, 3);
-        console.log(result);
-        var res=homePageLimits.sync(null,result);
-        console.log(res);
-        //totalVolumesUsed();
-
-
-    })
-
-}
 
 
 function home(req,res){
