@@ -99,22 +99,7 @@ client.ping({
 
 //var serversList;
 //var serversList;
-function getServersList(callback){
 
-    process.nextTick(function() {
-        novaClient.getServers(function (err, servers) {
-            if (err) {
-                console.dir(err);
-                return;
-            } else {
-                //serversList = servers;
-                callback(null,servers);
-            }
-        });
-
-    });
-
-}
 
 function infoMessages(serversList,callback){
     var MyDate = new Date();
@@ -214,7 +199,7 @@ function fetchInfoForHomePage(req,res){
 
     Sync(function() {
         //Fetching the details of the servers(instances) to match the instance ID and setting the IP address
-        var serverList=getServersList.sync();
+        var serverList=totalInstancesUsed.sync();
 
         var infoMessageForHomePage=infoMessages.sync(null,serverList);
 
@@ -223,6 +208,7 @@ function fetchInfoForHomePage(req,res){
 
         var volumesList=totalVolumesUsed.sync();
 
+        //Limit check for Volumes
         var volumeAlert=false;
         if(volumesList.length==limits.body.quota_set.volumes-1){
             volumeAlert=true;
@@ -230,7 +216,15 @@ function fetchInfoForHomePage(req,res){
             volumeAlert=false;
         }
 
-        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert});
+        //Limit check for instances, Need to remove the hardcoding
+        var instanceAlert=false;
+        if(serverList.length==10-1){
+            instanceAlert=true;
+        }else{
+            instanceAlert=false;
+        }
+
+        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert});
 
     });
 
@@ -238,7 +232,7 @@ function fetchInfoForHomePage(req,res){
 
 exports.fetchInfoForHomePage=fetchInfoForHomePage;
 
-function common(){
+/*function common(){
     Sync(function() {
 
         // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context
@@ -250,8 +244,24 @@ function common(){
 
     })
 
-}
+}*/
 
+function totalInstancesUsed(callback){
+
+    process.nextTick(function() {
+        novaClient.getServers(function (err, servers) {
+            if (err) {
+                console.dir(err);
+                return;
+            } else {
+                //serversList = servers;
+                callback(null,servers);
+            }
+        });
+
+    });
+
+}
 
 function totalVolumesUsed(callback){
 
