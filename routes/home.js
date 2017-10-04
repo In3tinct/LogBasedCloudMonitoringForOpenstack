@@ -13,19 +13,6 @@ var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
 
-/*keystone.getToken('admin', 'sjsumaster2017', function(error, token){
-    if(error)
-    {
-        console.error('an error occured', error);
-    }
-    else
-    {
-        console.log('A general token object has been retrived', token);
-        //the token value (token.token) is required for project listing & getting project specific tokens
-    }
-});*/
-
-
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
     provider: 'openstack',
@@ -34,7 +21,6 @@ var novaClient = pkgcloud.compute.createClient({
     region: 'RegionOne', //default for DevStack, might be different on other OpenStack distributions
     authUrl: 'http://130.65.159.143:5000'
     });
-
 
 
 var blockStorageClient = pkgcloud.blockstorage.createClient({
@@ -94,11 +80,6 @@ client.ping({
         console.log('All is well');
     }
 });
-
-
-
-//var serversList;
-//var serversList;
 
 
 function infoMessages(serversList,callback){
@@ -218,7 +199,7 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for instances, Need to remove the hardcoding
         var instanceAlert=false;
-        if(serverList.length==4){
+        if(serverList.length==4-1){
             instanceAlert=true;
         }else{
             instanceAlert=false;
@@ -232,19 +213,7 @@ function fetchInfoForHomePage(req,res){
 
 exports.fetchInfoForHomePage=fetchInfoForHomePage;
 
-/*function common(){
-    Sync(function() {
 
-        // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context
-        var result = fetchingKeyStoneToken.sync(null, 2, 3);
-        console.log(result);
-        var res=homePageLimits.sync(null,result);
-        console.log(res);
-        //totalVolumesUsed();
-
-    })
-
-}*/
 
 function totalInstancesUsed(callback){
 
