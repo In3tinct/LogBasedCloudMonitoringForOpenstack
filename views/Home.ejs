@@ -40,7 +40,16 @@
           </div>
       </header>
 
+      <div ng-controller="homeController">
 
+      <div ng-show="data.instanceAlert" class="alert alert-warning">
+          <strong>Warning!</strong> Please release instances or increase the instance quota
+      </div>
+
+      <div ng-show="data.volumeAlert" class="alert alert-warning">
+          <strong>Warning!</strong> Please release volumes or increase the volume quota
+      </div>
+      </div>
       <div class="container" ng-controller="homeController">
           <div class="well">
               <table class="table table-striped table-bordered table-hover datatable">
