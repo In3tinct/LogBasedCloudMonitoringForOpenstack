@@ -49,6 +49,14 @@
       <div ng-show="data.volumeAlert" class="alert alert-warning">
           <strong>Warning!</strong> Please release volumes or increase the volume quota
       </div>
+
+          <div ng-show="data.FloatingIpAlert" class="alert alert-warning">
+              <strong>Warning!</strong> Please release Floating IPs or increase the quota for Floating IPs
+          </div>
+
+          <div ng-show="data.securityGroupAlert" class="alert alert-warning">
+              <strong>Warning!</strong> Please release Security Groups or increase the quota for Security Groups
+          </div>
       </div>
       <div class="container" ng-controller="homeController">
           <div class="well">

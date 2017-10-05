@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-
+var password="sjsumaster2017"
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
@@ -206,7 +206,28 @@ function fetchInfoForHomePage(req,res){
             instanceAlert=false;
         }
 
-        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert});
+        var FloatingIplength=floatingIps.sync(null,keystonetoken);
+
+        var securityGroupList=totalSecurityGroup.sync();
+
+        var maxFloationIps=3;
+
+        var maxSecurityGroups=3;
+        var count=0;
+        for( i=0; i<securityGroupList.length;i++){
+            if(securityGroupList[i].tenantId=='4bd09f787534467eb0dc7f8b2e931a1d') {
+                count++;
+            }
+        }
+        var securityGroupAlert = false;
+        if(count>=maxSecurityGroups-1) {
+            securityGroupAlert=true;
+        }
+        var FloatingIpAlert=false;
+
+        if(FloatingIplength>=maxFloationIps-1) FloatingIpAlert =true;
+
+        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,"FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert});
 
     });
 
@@ -317,6 +338,51 @@ function homePageLimits(keystoneToken,callback){
 
 var username;
 
+var securityGroupClient = pkgcloud.network.createClient({
+    provider: 'openstack',
+    username: 'admin',
+    password: 'sjsumaster2017',
+    region: 'RegionOne', //default for DevStack, might be different on other OpenStack distributions
+    authUrl: 'http://130.65.159.143:5000'
+});
+
+function totalSecurityGroup(callback){
+
+    process.nextTick(function(){
+        securityGroupClient.getSecurityGroups(function (err, securityGroups) {
+            if (err) {
+                console.dir(err);
+                return;
+            }
+            callback(null, securityGroups);
+            console.log(securityGroups);
+        });
+    });
+}
+
+function floatingIps(keystoneToken, callback){
+
+    console.log("in home page limit")
+    var options = {
+        url: 'http://130.65.159.143:9696/v2.0/floatingips',
+        method: 'GET',
+        headers: {'content-type': 'application/json', 'X-Auth-Token':keystoneToken},
+        json: true
+    };
+
+    process.nextTick(function(){
+        request(options, function (err, res, body) {
+            if (err) {
+                console.error('error posting json: ', err)
+                throw err
+            }
+            var len=res.body.floatingips.length;
+            console.log(len)
+            callback(null,len);
+        })
+    })
+
+}
 
 
 
