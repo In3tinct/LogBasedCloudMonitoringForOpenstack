@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-var password="sjsumaster2017"
+var password=""
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
@@ -200,7 +200,8 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for instances, Need to remove the hardcoding
         var instanceAlert=false;
-        if(serverList.length==4-1){
+        var maxServer=4
+        if(serverList.length==maxServer-1){
             instanceAlert=true;
         }else{
             instanceAlert=false;
@@ -227,7 +228,13 @@ function fetchInfoForHomePage(req,res){
 
         if(FloatingIplength>=maxFloationIps-1) FloatingIpAlert =true;
 
-        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,"FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert});
+        var volumes=[{"Volume":"Used", "count":volumesList.length},{"Volume":"Unused", "count": limits.body.quota_set.volumes-volumesList.length+1}];
+        var floatingPoints=[{"FloatingPoints":"Used", "count": FloatingIplength},{"FloatingPoints":"Unused", "count": maxFloationIps-FloatingIplength}];
+        var securityGroup=[{"securityGroup":"Used","count":count },{"securityGroup":"Unused","count":maxFloationIps-count }];
+        var instance=[{"instanceList":"Used","count":serverList.length},{"instanceList":"Unused","count":maxServer-serverList.length}];
+        res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,
+            "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,
+            "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance});
 
     });
 

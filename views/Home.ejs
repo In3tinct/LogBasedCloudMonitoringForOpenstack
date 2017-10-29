@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Log-Based Cloud Monitoring for OpenStack</title>
     <meta name="description" content="OpenStack Components">
@@ -24,8 +27,15 @@
 
     <script
             src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
     <script src="./controllers/homeController.js"> </script>
+    <!-- Files used to construct plots (bar chart, line chart, scatter plot, etc.) on page-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.1/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.1/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.1/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.1/Chart.min.js"></script>
+
 
 </head>
 
@@ -39,6 +49,27 @@
               </div>
           </div>
       </header>
+
+
+      <div class="row">
+          <div class="col-sm-1">
+              <table class="table table-bordered">
+                  <tr align="center ">
+                      <th>Volumes</th>
+                      <th>Floating IPs</th>
+                      <th>Security Groups</th>
+                      <th>Instances</th>
+                  </tr>
+                  <tr class="active">
+                      <td><canvas id="donutChart" width=260 height=185></canvas></td>
+                      <td><canvas id="donutChart1" width=260 height=185></canvas></td>
+                      <td><canvas id="donutChart3" width=260 height=185></canvas></td>
+                      <td><canvas id="donutChart4" width=260 height=185></canvas></td>
+                  </tr>
+              </table>
+          </div>
+      </div>
+      </div>
 
       <div ng-controller="homeController">
 
