@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const stripAnsi = require('strip-ansi');
+var Sync = require('sync');
 
 var elasticsearch = require('elasticsearch');
 
@@ -26,7 +27,51 @@ var resultForErrorsTable=[];
 
 /* GET home page. */
 
+function fetchTracecLogsForNova(index,callback){
+
+    process.nextTick(function() {
+    client.search({
+        index: index,
+        q: '*TRACE*',
+        sort: '@timestamp:desc',
+        size: '10',
+        pretty: true
+    }).then(function (body) {
+        var hits=body.hits.hits;
+        var resultForCommontable=[];
+
+        var jsonObject={};
+        for (var i=0; i<hits.length;i++) {
+            var strippedMessage = stripAnsi(hits[i]._source.message[1]);
+
+            var loglevel = strippedMessage.substr(0, strippedMessage.indexOf(' '));
+            var message = strippedMessage.substr(strippedMessage.indexOf(' ') + 1);
+            var timestamp = hits[i]._source.timestamp;
+
+
+                jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
+                resultForErrorsTable.push(jsonObject);
+
+                //Deleting old entries, as we only want to keep this table of length 10
+                if (resultForErrorsTable.length > 10) {
+                    resultForErrorsTable.shift();
+                }
+
+        }
+
+        callback(null,resultForErrorsTable);
+
+        }, function (error) {
+        console.trace(error.message);
+    });
+    });
+
+}
+
+
 function fetchNovaLogs(req,res){
+
+    Sync(function() {
     var MyDate = new Date();
     var isoDate = new Date(MyDate).toISOString();
     var MyDateString;
@@ -40,6 +85,9 @@ function fetchNovaLogs(req,res){
     console.log(MyDateString);
 
     var index='novaindex-'+MyDateString;
+
+    var resultForErrorsTable=fetchTracecLogsForNova.sync(null,index);
+
     console.log(index);
         client.search({
             index: index,
@@ -61,7 +109,9 @@ function fetchNovaLogs(req,res){
                 var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
                 var timestamp=hits[i]._source.timestamp;
 
-                if(loglevel==="ERROR" || loglevel==="WARNING"){
+                /*if(loglevel==="ERROR" || loglevel==="WARNING"){
+
+
                     jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
                     resultForErrorsTable.push(jsonObject);
 
@@ -69,7 +119,7 @@ function fetchNovaLogs(req,res){
                     if (resultForErrorsTable.length>10){
                         resultForErrorsTable.shift();
                     }
-                }
+                }*/
 
                 jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
                 resultForCommontable.push(jsonObject);
@@ -83,6 +133,7 @@ function fetchNovaLogs(req,res){
         }, function (error) {
             console.trace(error.message);
         });
+    });
 
 
 }
