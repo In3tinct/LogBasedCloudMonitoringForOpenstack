@@ -41,6 +41,12 @@ app.get('/fetchnova', forNova.fetchNovaLogs);
 app.get('/neutron', forNeutron.neutron);
 app.get('/fetchneutron', forNeutron.fetchNeutronLogs);
 
+app.get('/home', forHome.home);
+app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
+
+app.get('/searchlog', forSearch.search);
+app.post('/search', forSearch.fetchNeutronLogs);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
