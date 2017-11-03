@@ -200,7 +200,7 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for instances, Need to remove the hardcoding
         var instanceAlert=false;
-        var maxServer=4
+        var maxServer=4;
         if(serverList.length==maxServer-1){
             instanceAlert=true;
         }else{
@@ -209,11 +209,17 @@ function fetchInfoForHomePage(req,res){
 
         var FloatingIplength=floatingIps.sync(null,keystonetoken);
 
+        var maxLimits=maxfloatingIps.sync(null,keystonetoken);
+
+        var maxFloationIps= maxLimits.quota.floatingip;
+
+        var maxSecurityGroups= maxLimits.quota.security_group;
+
         var securityGroupList=totalSecurityGroup.sync();
 
-        var maxFloationIps=3;
-
-        var maxSecurityGroups=3;
+        // var maxFloationIps=3;
+        //
+        // var maxSecurityGroups=3;
         var count=0;
         for( i=0; i<securityGroupList.length;i++){
             if(securityGroupList[i].tenantId=='4bd09f787534467eb0dc7f8b2e931a1d') {
@@ -230,7 +236,7 @@ function fetchInfoForHomePage(req,res){
 
         var volumes=[{"Volume":"Used", "count":volumesList.length},{"Volume":"Unused", "count": limits.body.quota_set.volumes-volumesList.length+1}];
         var floatingPoints=[{"FloatingPoints":"Used", "count": FloatingIplength},{"FloatingPoints":"Unused", "count": maxFloationIps-FloatingIplength}];
-        var securityGroup=[{"securityGroup":"Used","count":count },{"securityGroup":"Unused","count":maxFloationIps-count }];
+        var securityGroup=[{"securityGroup":"Used","count":count },{"securityGroup":"Unused","count":maxSecurityGroups-count }];
         var instance=[{"instanceList":"Used","count":serverList.length},{"instanceList":"Unused","count":maxServer-serverList.length}];
         res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,
             "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,
@@ -385,6 +391,30 @@ function floatingIps(keystoneToken, callback){
             }
             var len=res.body.floatingips.length;
             console.log(len)
+            callback(null,len);
+        })
+    })
+
+}
+
+function maxfloatingIps(keystoneToken, callback){
+
+    console.log("in home page limit")
+    var options = {
+        url: 'http://130.65.159.143:9696/v2.0/quotas/4bd09f787534467eb0dc7f8b2e931a1d',
+        method: 'GET',
+        headers: {'content-type': 'application/json', 'X-Auth-Token':keystoneToken},
+        json: true
+    };
+
+    process.nextTick(function(){
+        request(options, function (err, res, body) {
+            if (err) {
+                console.error('error posting json: ', err)
+                throw err
+            }
+            var len=res.body;
+           // console.log(len)
             callback(null,len);
         })
     })
