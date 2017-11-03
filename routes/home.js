@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-var password=""
+var password="sjsumaster2017"
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
@@ -200,7 +200,11 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for instances, Need to remove the hardcoding
         var instanceAlert=false;
-        var maxServer=4;
+      //  var maxServer=4;
+        var maxServerDetail=maxInstanceLimt.sync(null,keystonetoken);
+
+        var maxServer=maxServerDetail.quota_set.instances.limit;
+
         if(serverList.length==maxServer-1){
             instanceAlert=true;
         }else{
@@ -421,6 +425,29 @@ function maxfloatingIps(keystoneToken, callback){
 
 }
 
+function maxInstanceLimt(keystoneToken, callback){
+
+    console.log("in home page limit")
+    var options = {
+        url: 'http://130.65.159.143:8774/v2.1/ab40cc4abd5d40319bdd1c4447eb07d2/os-quota-sets/4bd09f787534467eb0dc7f8b2e931a1d/detail',
+        method: 'GET',
+        headers: {'content-type': 'application/json', 'X-Auth-Token':keystoneToken},
+        json: true
+    };
+
+    process.nextTick(function(){
+        request(options, function (err, res, body) {
+            if (err) {
+                console.error('error posting json: ', err)
+                throw err
+            }
+            var len=res.body;
+            // console.log(len)
+            callback(null,len);
+        })
+    })
+
+}
 
 
 function home(req,res){
