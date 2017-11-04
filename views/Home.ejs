@@ -231,7 +231,9 @@
                                 <div class="footer">
                                     <hr>
                                     <div class="stats">
-                                        <i class="fa fa-clock-o"></i> Last Updated 1 days ago
+                                        <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                            {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +253,9 @@
                                             <div class="footer">
                                                 <hr>
                                                 <div class="stats">
-                                                    <i class="fa fa-clock-o"></i> Last Updated 1 days ago
+                                                    <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                                        {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,7 +276,9 @@
                                                         <div class="footer">
                                                             <hr>
                                                             <div class="stats">
-                                                                <i class="fa fa-clock-o"></i> Last Updated 1 days ago
+                                                                <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                                                    {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -299,6 +305,54 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="content">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="card">
+                                                                            <div class="header">
+                                                                                <h4 class="title">Overview</h4>
+                                                                                <p class="category">OpenStack Components</p>
+                                                                            </div>
+                                                                            <div class="content">
+                                                                                <div id="overviewPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>
+
+                                                                                <div class="footer">
+                                                                                    <hr>
+                                                                                    <div class="stats">
+                                                                                        <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                                                                            {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="content">
+                                                                        <div class="container-fluid">
+                                                                            <div class="row">
+                                                                                <div class="col-md-4">
+                                                                                    <div class="card">
+                                                                                        <div class="header">
+                                                                                            <h4 class="title">Analytics</h4>
+                                                                                            <p class="category">OpenStack Components</p>
+                                                                                        </div>
+                                                                                        <div class="content">
+                                                                                            <div id="analyticsPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>
+
+                                                                                            <div class="footer">
+
+                                                                                                <hr>
+                                                                                                <div class="stats">
+                                                                                                    <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                                                                                        {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                             <!--<div class="row">-->
                                                 <!--<div class="col-sm-1">-->
                                                     <!--<table class="table table-bordered">-->

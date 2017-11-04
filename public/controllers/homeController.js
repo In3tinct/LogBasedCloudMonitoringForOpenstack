@@ -18,6 +18,7 @@ app.controller('homeController',function($scope,$http) {
         url : "/fetchInfoForHomePage"
     }).success(function(data){
         $scope.data=data;
+        $scope.date = new Date();
         var realTimeData = data.volumes;
         var arrayLength = realTimeData.length;
         var categoryLabels = [];
