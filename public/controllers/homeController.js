@@ -13,6 +13,16 @@ app.controller('homeController',function($scope,$http) {
         })
     }, 5000);
 
+
+
+    $scope.navigateToNova=function() {
+        window.location.assign("/nova");
+    };
+
+    $scope.navigateToNeutron=function() {
+        window.location.assign("/neutron");
+    };
+
     $http({
         method : "GET",
         url : "/fetchInfoForHomePage"
