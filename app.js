@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
-var graph=require('./routes/chart');
+//var graph=require('./routes/chart');
 
 var login=require('./routes/login');
 
@@ -51,7 +51,7 @@ app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
 app.get('/searchlog', forSearch.search);
 app.post('/search', forSearch.fetchNeutronLogs);
 
-app.get('/chart',graph.graphs)
+//app.get('/chart',graph.graphs)
 
 app.get('/login',login.login);
 app.post('/checkLogin',login.checkLogin)
