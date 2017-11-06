@@ -97,7 +97,12 @@ exports.fetchNeutronLogs=fetchNeutronLogs;
 
 
 function search(req,res){
+    if(req.session.user) {
     res.render("search",{username:"abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
 }
 
 

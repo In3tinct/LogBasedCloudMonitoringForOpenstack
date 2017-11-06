@@ -140,7 +140,12 @@ exports.fetchNeutronLogs=fetchNeutronLogs;
 
 
 function neutron(req,res){
-    res.render("Neutron.ejs",{username:"abc"});
+    if(req.session.user) {
+        res.render("Neutron.ejs", {username: "abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
 }
 
 

@@ -451,7 +451,13 @@ function maxInstanceLimt(keystoneToken, callback){
 
 
 function home(req,res){
-    res.render("Home.ejs", {username: "abc"});
+
+    if(req.session.user) {
+        res.render("Home.ejs", {username: "abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
 }
 
 

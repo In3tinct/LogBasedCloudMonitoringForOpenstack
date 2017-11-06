@@ -142,7 +142,12 @@ exports.fetchNovaLogs=fetchNovaLogs;
 
 
 function nova(req,res){
+    if(req.session.user) {
     res.render("Nova.ejs",{username:"abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
 }
 
 

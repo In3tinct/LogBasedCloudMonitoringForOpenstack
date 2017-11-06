@@ -1,20 +1,22 @@
 var ejs=require('ejs');
 //var mysql= require('./mysql');
 var passwordHash = require("password-hash");
-//var session = require('express-session');
+var session = require('express-session');
 //var object_id="lo_id";
 //var description="Logged on";
 
 exports.checkLogin=function(req,res){
     var email=req.body.email;
     var password=req.body.password;
+  //  req.session.user=email;
     var json_response;
     var hashedpassword = "sha1$809c72c9$1$dcb844794b7169480f2d255dd8c68baf218cedd9";
     if(email!="admin" || !passwordHash.verify(req.body.password,hashedpassword)){
-        json_response = {"statuscode": 401};
+        json_response = {"statuscode": 401,"message":true};
     }
     else{
-        json_response = {"statuscode": 200};
+        req.session.user=email;
+        json_response = {"statuscode": 200,"message":false};
     }
 
     res.send(json_response);
@@ -77,10 +79,18 @@ exports.checkLogin=function(req,res){
     //     }});
 
 };
-exports.logout=function (req, res) {
-    req.session.destroy();
-    res.send("logout success!");
-};
+// exports.logout=function (req, res) {
+//     req.session.destroy();
+//     res.send("logout success!");
+// };
 exports.login=function nova(req,res){
     res.render("login",{username:"abc"});
-}
+};
+exports.logout = function(req,res)
+{
+    if(req.session.user){
+    req.session.destroy();
+    res.redirect('/login');
+    }
+    else res.redirect('/login');
+};
