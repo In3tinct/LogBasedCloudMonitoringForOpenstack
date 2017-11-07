@@ -48,7 +48,7 @@ function fetchTracecLogsForNova(index,callback){
             var message = strippedMessage.substr(strippedMessage.indexOf(' ') + 1);
             var timestamp = hits[i]._source.timestamp;
 
-
+            if(loglevel==="ERROR" || loglevel==="TRACE") {
                 jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
                 resultForErrorsTable.push(jsonObject);
 
@@ -56,6 +56,7 @@ function fetchTracecLogsForNova(index,callback){
                 if (resultForErrorsTable.length > 10) {
                     resultForErrorsTable.shift();
                 }
+            }
 
         }
 
@@ -120,9 +121,10 @@ function fetchNovaLogs(req,res){
                         resultForErrorsTable.shift();
                     }
                 }*/
-
-                jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
-                resultForCommontable.push(jsonObject);
+                if(loglevel==="DEBUG" || loglevel==="INFO") {
+                    jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
+                    resultForCommontable.push(jsonObject);
+                }
             }
 
             //Since i was getting unicode and ansi code characters with the message i am striping those
