@@ -87,8 +87,11 @@
                                                                 <label class="sr-only" for="form-password">Password</label>
                                                                 <input type="password" name="password" class="form-control"  name="password" ng-model='password' required>
                                                             </div>
-                                                            <button type="submit" class="btn" ng-click="submit()">Login</button>
+                                                            <button type="submit" class="btn" ng-click="submit()">Login</button><br>
                                                         </form>
+                                                       <br> <div ng-show="invalid_login" class="alert alert-warning">
+                                                            <strong>Warning!</strong> Incorrect Username/Password
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
