@@ -48,13 +48,14 @@ function fetchTracecLogsForNeutron(index,callback){
                 var message = strippedMessage.substr(strippedMessage.indexOf(' ') + 1);
                 var timestamp = hits[i]._source.timestamp;
 
+                if(loglevel==="ERROR" || loglevel==="TRACE") {
+                    jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
+                    resultForErrorsTable.push(jsonObject);
 
-                jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
-                resultForErrorsTable.push(jsonObject);
-
-                //Deleting old entries, as we only want to keep this table of length 10
-                if (resultForErrorsTable.length > 10) {
-                    resultForErrorsTable.shift();
+                    //Deleting old entries, as we only want to keep this table of length 10
+                    if (resultForErrorsTable.length > 10) {
+                        resultForErrorsTable.shift();
+                    }
                 }
 
             }
@@ -119,9 +120,10 @@ function fetchNeutronLogs(req,res){
                     resultForErrorsTable.shift();
                 }
             }*/
-
-            jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
-            resultForCommontable.push(jsonObject);
+            if(loglevel==="DEBUG" || loglevel==="INFO") {
+                jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
+                resultForCommontable.push(jsonObject);
+            }
         }
 
         //Since i was getting unicode and ansi code characters with the message i am striping those
