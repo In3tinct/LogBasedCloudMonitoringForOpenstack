@@ -15,10 +15,11 @@ login.controller('login', function($scope, $http,$window) {
             $scope.test=data.statuscode;
             if (data.statuscode==401) {
                 $scope.invalid_login = true;
-                $scope.validlogin = false;
+                //$scope.validlogin = false;
             }
             else
             {
+                $scope.invalid_login = false;
                 $window.location = '/home';
 
 
