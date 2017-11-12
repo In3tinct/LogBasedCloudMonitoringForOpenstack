@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-var password=""
+var password="sjsumaster2017"
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
@@ -451,7 +451,13 @@ function maxInstanceLimt(keystoneToken, callback){
 
 
 function home(req,res){
-    res.render("Home.ejs", {username: "abc"});
+
+    if(req.session.user) {
+        res.render("Home.ejs", {username: "abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
 }
 
 

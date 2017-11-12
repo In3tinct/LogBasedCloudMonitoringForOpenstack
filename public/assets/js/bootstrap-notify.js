@@ -2,7 +2,10 @@
     
     
 
-
+     Creative Tim Modifications
+     
+     Lines: 239, 240 was changed from top: 5px to top: 50% and we added margin-top: -13px. In this way the close button will be aligned vertically 
+     Line:242 - modified when the icon is set, we add the class "alert-with-icon", so there will be enough space for the icon.
 
 
 
@@ -12,10 +15,10 @@
 
 /*
 * Project: Bootstrap Notify = v3.1.5
-*
-*
-*
-*
+* Description: Turns standard Bootstrap alerts into "Growl-like" notifications.
+* Author: Mouse0270 aka Robert McIntosh
+* License: MIT License
+* Website: https://github.com/mouse0270/bootstrap-growl
 */
 
 /* global define:false, require: false, jQuery:false */

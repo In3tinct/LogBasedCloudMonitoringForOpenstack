@@ -4,9 +4,14 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+
+//var graph=require('./routes/chart');
+
+var login=require('./routes/login');
 
 var http = require('http');
 
@@ -20,6 +25,8 @@ var forNeutron=require('./routes/neutron');
 
 var forHome=require('./routes/home');
 
+var forCinder=require('./routes/cinder');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -31,6 +38,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'sjsumaster',
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.use('/', index);
 app.use('/users', users);
@@ -41,11 +53,21 @@ app.get('/fetchnova', forNova.fetchNovaLogs);
 app.get('/neutron', forNeutron.neutron);
 app.get('/fetchneutron', forNeutron.fetchNeutronLogs);
 
+app.get('/cinder', forCinder.cinder);
+app.get('/fetchcinder', forCinder.fetchCinderLogs);
+
 app.get('/home', forHome.home);
 app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
 
 app.get('/searchlog', forSearch.search);
 app.post('/search', forSearch.fetchNeutronLogs);
+
+//app.get('/chart',graph.graphs)
+
+app.get('/login',login.login);
+app.post('/checkLogin',login.checkLogin);
+app.get('/logout', login.logout);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
