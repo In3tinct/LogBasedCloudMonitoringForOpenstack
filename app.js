@@ -25,6 +25,8 @@ var forNeutron=require('./routes/neutron');
 
 var forHome=require('./routes/home');
 
+var forCinder=require('./routes/cinder');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -50,6 +52,9 @@ app.get('/fetchnova', forNova.fetchNovaLogs);
 
 app.get('/neutron', forNeutron.neutron);
 app.get('/fetchneutron', forNeutron.fetchNeutronLogs);
+
+app.get('/cinder', forCinder.cinder);
+app.get('/fetchcinder', forCinder.fetchCinderLogs);
 
 app.get('/home', forHome.home);
 app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
