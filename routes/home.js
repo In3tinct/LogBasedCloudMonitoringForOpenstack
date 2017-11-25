@@ -192,7 +192,7 @@ function fetchInfoForHomePage(req,res){
 
         //Limit check for Volumes
         var volumeAlert=false;
-        if(volumesList.length==limits.body.quota_set.volumes-1){
+        if(volumesList.length>=limits.body.quota_set.volumes-1){
             volumeAlert=true;
         }else{
             volumeAlert=false;
@@ -205,7 +205,7 @@ function fetchInfoForHomePage(req,res){
 
         var maxServer=maxServerDetail.quota_set.instances.limit;
 
-        if(serverList.length==maxServer-1){
+        if(serverList.length>=maxServer-1){
             instanceAlert=true;
         }else{
             instanceAlert=false;
