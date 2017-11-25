@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-var password="sjsumaster2017"
+var password=""
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
