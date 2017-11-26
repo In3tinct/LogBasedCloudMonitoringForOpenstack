@@ -27,6 +27,8 @@ var forHome=require('./routes/home');
 
 var forCinder=require('./routes/cinder');
 
+var forHorizon=require('./routes/horizon');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -61,6 +63,8 @@ app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
 
 app.get('/searchlog', forSearch.search);
 app.post('/search', forSearch.fetchNeutronLogs);
+
+app.get('/horizonip', forHorizon.fetchHorizonip);
 
 //app.get('/chart',graph.graphs)
 
