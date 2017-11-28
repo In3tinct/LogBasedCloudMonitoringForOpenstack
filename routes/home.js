@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const stripAnsi = require('strip-ansi');
-var request = require('request')
+var request = require('request');
+var nodemailer = require('nodemailer');
 var Sync = require('sync');
 
 //Api for openstack nova, blockstorage etc.
@@ -203,6 +204,7 @@ function fetchInfoForHomePage(req,res){
 
             if (volumesList.length >= limits.body.quota_set.volumes - 1) {
                 volumeAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release volumes or increase the volume quota");
             } else {
                 volumeAlert = false;
             }
@@ -220,6 +222,7 @@ function fetchInfoForHomePage(req,res){
 
             if (serverList.length >= maxServer - 1) {
                 instanceAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release instances or increase the instance quota");
             } else {
                 instanceAlert = false;
             }
@@ -251,6 +254,7 @@ function fetchInfoForHomePage(req,res){
             jsonAllQuota["securityGroupQuota"]=maxSecurityGroups;
             if (count >= maxSecurityGroups - 1) {
                 securityGroupAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release Security Groups or increase the quota for Security Groups");
             }else{
                 securityGroupAlert = false;
             }
@@ -264,6 +268,7 @@ function fetchInfoForHomePage(req,res){
 
             if (FloatingIplength >= maxFloationIps - 1) {
                 FloatingIpAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release Floating IPs or increase the quota for Floating IPs");
             }else{
                 FloatingIpAlert = false;
             }
@@ -479,7 +484,23 @@ function maxInstanceLimt(keystoneToken, callback){
     })
 
 }
+function emailAlert(emailMessage){
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'alertopenstack@gmail.com',
+            pass: '6692331052'
+        }
+    });
 
+    console.log(emailMessage);
+    transporter.sendMail({
+        from: 'alertopenstack',
+        to: 'devanjal@gmail.com',
+        subject: 'Alert',
+        text:emailMessage
+    });
+}
 
 function home(req,res){
 
