@@ -12,7 +12,7 @@ var pkgcloud = require('pkgcloud'),
 var OSWrap = require('openstack-wrapper');
 var keystone = new OSWrap.Keystone('http://130.65.159.143:5000/v3');
 
-var password=""
+var password="sjsumaster2017"
 
 // create our client with your openstack credentials
 var novaClient = pkgcloud.compute.createClient({
@@ -177,6 +177,12 @@ function infoMessages(serversList,callback){
 //from the time when server was started
 
 
+var jsonAllQuota={"volumeQuota":0,"instanceQuota":0,"floatingIpQuota":0,"securityGroupQuota":0};
+var volumeAlert=false;
+var instanceAlert=false;
+var securityGroupAlert=false;
+var FloatingIpAlert=false;
+
 function fetchInfoForHomePage(req,res){
 
     Sync(function() {
@@ -191,24 +197,32 @@ function fetchInfoForHomePage(req,res){
         var volumesList=totalVolumesUsed.sync();
 
         //Limit check for Volumes
-        var volumeAlert=false;
-        if(volumesList.length>=limits.body.quota_set.volumes-1){
-            volumeAlert=true;
-        }else{
-            volumeAlert=false;
+
+        if(jsonAllQuota["volumeQuota"]!=limits.body.quota_set.volumes) {
+            jsonAllQuota["volumeQuota"]=limits.body.quota_set.volumes;
+
+            if (volumesList.length >= limits.body.quota_set.volumes - 1) {
+                volumeAlert = true;
+            } else {
+                volumeAlert = false;
+            }
         }
 
         //Limit check for instances, Need to remove the hardcoding
-        var instanceAlert=false;
+
       //  var maxServer=4;
         var maxServerDetail=maxInstanceLimt.sync(null,keystonetoken);
 
         var maxServer=maxServerDetail.quota_set.instances.limit;
 
-        if(serverList.length>=maxServer-1){
-            instanceAlert=true;
-        }else{
-            instanceAlert=false;
+        if(jsonAllQuota["instanceQuota"]!=maxServer) {
+            jsonAllQuota["instanceQuota"]=maxServer;
+
+            if (serverList.length >= maxServer - 1) {
+                instanceAlert = true;
+            } else {
+                instanceAlert = false;
+            }
         }
 
         var FloatingIplength=floatingIps.sync(null,keystonetoken);
@@ -230,13 +244,30 @@ function fetchInfoForHomePage(req,res){
                 count++;
             }
         }
-        var securityGroupAlert = false;
-        if(count>=maxSecurityGroups-1) {
-            securityGroupAlert=true;
-        }
-        var FloatingIpAlert=false;
 
-        if(FloatingIplength>=maxFloationIps-1) FloatingIpAlert =true;
+
+        if(jsonAllQuota["securityGroupQuota"]!=maxSecurityGroups) {
+
+            jsonAllQuota["securityGroupQuota"]=maxSecurityGroups;
+            if (count >= maxSecurityGroups - 1) {
+                securityGroupAlert = true;
+            }else{
+                securityGroupAlert = false;
+            }
+        }
+
+
+
+
+        if(jsonAllQuota["floatingIpQuota"]!=maxFloationIps) {
+            jsonAllQuota["floatingIpQuota"]=maxFloationIps;
+
+            if (FloatingIplength >= maxFloationIps - 1) {
+                FloatingIpAlert = true;
+            }else{
+                FloatingIpAlert = false;
+            }
+        }
 
         var volumes=[{"Volume":"Used", "count":volumesList.length},{"Volume":"Unused", "count": limits.body.quota_set.volumes-volumesList.length+1}];
         var floatingPoints=[{"FloatingPoints":"Used", "count": FloatingIplength},{"FloatingPoints":"Unused", "count": maxFloationIps-FloatingIplength}];
