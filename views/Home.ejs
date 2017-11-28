@@ -392,6 +392,12 @@
                                             <div ng-show="data.securityGroupAlert" class="alert alert-warning">
                                                 <strong>Warning!</strong> Please release Security Groups or increase the quota for Security Groups
                                             </div>
+                                            <div ng-show="data.cpuAlert" class="alert alert-warning">
+                                                <strong>Warning!</strong> Please add more CPUs or Release CPUs
+                                            </div>
+                                            <div ng-show="data.RamAlert" class="alert alert-warning">
+                                                <strong>Warning!</strong> Please add more Ram or Release Memory
+                                            </div>
                                         </div>
                                         <div class="container" ng-controller="homeController">
                                             <div class="well">

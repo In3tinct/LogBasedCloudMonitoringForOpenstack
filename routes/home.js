@@ -284,7 +284,7 @@ function fetchInfoForHomePage(req,res){
         if(jsonAllQuota["ramQuota"]!=ramMaxLimit) {
             jsonAllQuota["ramQuota"]=ramMaxLimit;
 
-            if (ramUsed >= ramMaxLimit - 1) {
+            if (ramUsed >= ramMaxLimit - 5) {
                 RamAlert = true;
                 emailAlert("WARNING ALERT!!!! Please add more Ram or Release Memory ");
             }else{
@@ -300,7 +300,7 @@ function fetchInfoForHomePage(req,res){
 
             if (cpuUsed >= cpuMaxLimit - 1) {
                 cpuAlert = true;
-                emailAlert("WARNING ALERT!!!! Please add more CPUs or Release CPU ");
+                emailAlert("WARNING ALERT!!!! Please add more CPUs or Release CPUs ");
             }else{
                 cpuAlert = false;
             }
@@ -314,7 +314,7 @@ function fetchInfoForHomePage(req,res){
         var cpu=[{"cpu":"Used(core)","count":cpuUsed},{"cpu":"Unused (Core)","count":cpuMaxLimit-cpuUsed}];
 
         res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,
-            "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,
+            "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,"RamAlert":RamAlert, "cpuAlert":cpuAlert,
             "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance,"ram":ram, "cpu":cpu });
 
     });
