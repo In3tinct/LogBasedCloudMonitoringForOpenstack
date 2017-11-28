@@ -23,6 +23,10 @@ app.controller('homeController',function($scope,$http) {
         window.location.assign("/neutron");
     };
 
+    $scope.navigateToMaps=function() {
+        window.location.assign("/ip");
+    };
+
     $http({
         method : "GET",
         url : "/fetchInfoForHomePage"
