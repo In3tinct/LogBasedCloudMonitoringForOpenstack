@@ -4,6 +4,7 @@ const stripAnsi = require('strip-ansi');
 var request = require('request');
 var nodemailer = require('nodemailer');
 var Sync = require('sync');
+var nodemailer = require('nodemailer');
 
 //Api for openstack nova, blockstorage etc.
 var pkgcloud = require('pkgcloud'),
@@ -261,7 +262,6 @@ function fetchInfoForHomePage(req,res){
                 securityGroupAlert = false;
             }
         }
-
 
 
 
@@ -545,6 +545,24 @@ function home(req,res){
     else{
         res.redirect("/login");
     }
+}
+
+function emailWarning(emailId){
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'alertopenstack@gmail.com',
+            pass: '6692331052'
+        }
+    });
+
+  //  console.log(emailId);
+    transporter.sendMail({
+        from: 'alertopenstack',
+        to: 'devanjal@gmail.com',
+        subject: 'Alert',
+        text:emailId
+    });
 }
 
 

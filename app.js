@@ -8,6 +8,7 @@ var session = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+//var cron=require('./routes/cron')
 
 //var graph=require('./routes/chart');
 
