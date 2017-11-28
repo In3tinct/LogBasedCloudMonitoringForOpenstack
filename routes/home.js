@@ -4,7 +4,6 @@ const stripAnsi = require('strip-ansi');
 var request = require('request');
 var nodemailer = require('nodemailer');
 var Sync = require('sync');
-var nodemailer = require('nodemailer');
 
 //Api for openstack nova, blockstorage etc.
 var pkgcloud = require('pkgcloud'),
