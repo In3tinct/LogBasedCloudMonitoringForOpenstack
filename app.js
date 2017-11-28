@@ -64,7 +64,8 @@ app.get('/fetchInfoForHomePage', forHome.fetchInfoForHomePage);
 app.get('/searchlog', forSearch.search);
 app.post('/search', forSearch.fetchNeutronLogs);
 
-app.get('/horizonip', forHorizon.fetchHorizonip);
+app.get('/ip', forHorizon.ip);
+app.get('/fetchHorizonip', forHorizon.fetchHorizonip);
 
 //app.get('/chart',graph.graphs)
 

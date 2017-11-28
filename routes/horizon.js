@@ -73,3 +73,17 @@ function fetchHorizonip(req,res){
 }
 
 exports.fetchHorizonip=fetchHorizonip;
+
+
+function ip(req,res){
+
+    if(req.session.user) {
+        res.render("IpTrack.ejs", {username: "abc"});
+    }
+    else{
+        res.redirect("/login");
+    }
+}
+
+
+exports.ip=ip;
