@@ -9,6 +9,7 @@ var session = require('express-session');
 var index = require('./routes/index');
 var users = require('./routes/users');
 //var cron=require('./routes/cron')
+var trace=require('./routes/Trace');
 
 //var graph=require('./routes/chart');
 
@@ -69,6 +70,8 @@ app.get('/ip', forHorizon.ip);
 app.get('/fetchHorizonip', forHorizon.fetchHorizonip);
 
 //app.get('/chart',graph.graphs)
+app.post('/trace', trace.fetchNeutronLogs);
+app.get('/tracelog',trace.traceLog);
 
 app.get('/login',login.login);
 app.post('/checkLogin',login.checkLogin);
