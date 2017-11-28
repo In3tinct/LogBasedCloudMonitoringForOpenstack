@@ -299,7 +299,9 @@
                                                                     <div class="footer">
                                                                         <hr>
                                                                         <div class="stats">
-                                                                            <i class="fa fa-clock-o"></i> Last Updated 1 days ago
+                                                                            <i class="fa fa-clock-o"></i> Last Updated on <div ng-controller="homeController">
+                                                                                {{date | date:"MM-dd-yy hh:mm:ss"}}<br/>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -311,12 +313,12 @@
                                                                     <div class="col-md-4">
                                                                         <div class="card">
                                                                             <div class="header">
-                                                                                <h4 class="title">Overview</h4>
-                                                                                <p class="category">OpenStack Components</p>
+                                                                                <h4 class="title">Ram</h4>
+                                                                                <p class="category">Memory Components</p>
                                                                             </div>
                                                                             <div class="content">
-                                                                                <div id="overviewPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>
-
+                                                                                <!--<div id="overviewPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>-->
+                                                                                <canvas id="donutChart5" width=260 height=260></canvas>
                                                                                 <div class="footer">
                                                                                     <hr>
                                                                                     <div class="stats">
@@ -335,12 +337,12 @@
                                                                                 <div class="col-md-4">
                                                                                     <div class="card">
                                                                                         <div class="header">
-                                                                                            <h4 class="title">Analytics</h4>
-                                                                                            <p class="category">OpenStack Components</p>
+                                                                                            <h4 class="title">CPU </h4>
+                                                                                            <p class="category">OpenStack Processing Unit</p>
                                                                                         </div>
                                                                                         <div class="content">
-                                                                                            <div id="analyticsPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>
-
+                                                                                            <!--<div id="analyticsPreferences" class="ct-chart ct-perfect-fourth" width=260 height=260></div>-->
+                                                                                            <canvas id="donutChart6" width=260 height=260></canvas>
                                                                                             <div class="footer">
 
                                                                                                 <hr>

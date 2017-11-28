@@ -63,6 +63,107 @@ app.controller('homeController',function($scope,$http) {
             instanceLabels.push(instanceData[l]["instanceList"]);
             instanceCount.push(instanceData[l]["count"]);
         }
+        var ramData = data.ram;
+      //  alert(ramData.length)
+        var ramArrayLength = ramData.length;
+        var ramLabels = [];
+        var ramCount = [];
+        for (var m = 0; m < ramArrayLength; m++) {
+            ramLabels.push(ramData[m]["ram"]);
+            ramCount.push(ramData[m]["count"]);
+        }
+        var cpuData = data.cpu;
+        var cpuArrayLength = cpuData.length;
+        var cpuLabels = [];
+        var cpuCount = [];
+        for (var n = 0; n < cpuArrayLength; n++) {
+            cpuLabels.push(cpuData[n]["cpu"]);
+            cpuCount.push(cpuData[n]["count"]);
+        }
+        var ctx6 = document.getElementById("donutChart6");
+        var myDoughnutChart6 = new Chart(ctx6, {
+            type: 'doughnut',
+            data: {
+                labels: cpuLabels,
+                datasets: [
+                    {
+                        data: cpuCount,
+                        backgroundColor: [
+                            "#FF6384",
+                            "#36A2EB",
+                            "#FFCE56",
+                            "#CD5C5C",
+                            "#F08080",
+                            "#FA8072",
+                            "#E9967A",
+                            "#FFA07A",
+                            "#00FF00",
+                            "#800080",
+                            "#000080",
+                            "#008080",
+                            "#FF0000"
+                        ],
+                        hoverBackgroundColor: [
+                            "#FF6384",
+                            "#36A2EB",
+                            "#FFCE56",
+                            "#CD5C5C",
+                            "#F08080",
+                            "#FA8072",
+                            "#E9967A",
+                            "#FFA07A",
+                            "#00FF00",
+                            "#800080",
+                            "#000080",
+                            "#008080",
+                            "#FF0000"
+                        ]
+                    }]
+            }
+        });
+
+
+        var ctx5 = document.getElementById("donutChart5");
+        var myDoughnutChart5 = new Chart(ctx5, {
+            type: 'doughnut',
+            data: {
+                labels: ramLabels,
+                datasets: [
+                    {
+                        data: ramCount,
+                        backgroundColor: [
+                            "#FF6384",
+                            "#36A2EB",
+                            "#FFCE56",
+                            "#CD5C5C",
+                            "#F08080",
+                            "#FA8072",
+                            "#E9967A",
+                            "#FFA07A",
+                            "#00FF00",
+                            "#800080",
+                            "#000080",
+                            "#008080",
+                            "#FF0000"
+                        ],
+                        hoverBackgroundColor: [
+                            "#FF6384",
+                            "#36A2EB",
+                            "#FFCE56",
+                            "#CD5C5C",
+                            "#F08080",
+                            "#FA8072",
+                            "#E9967A",
+                            "#FFA07A",
+                            "#00FF00",
+                            "#800080",
+                            "#000080",
+                            "#008080",
+                            "#FF0000"
+                        ]
+                    }]
+            }
+        });
 
         var ctx4 = document.getElementById("donutChart4");
         var myDoughnutChart4 = new Chart(ctx4, {

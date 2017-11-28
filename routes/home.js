@@ -178,12 +178,13 @@ function infoMessages(serversList,callback){
 //from the time when server was started
 
 
-var jsonAllQuota={"volumeQuota":0,"instanceQuota":0,"floatingIpQuota":0,"securityGroupQuota":0};
+var jsonAllQuota={"volumeQuota":0,"instanceQuota":0,"floatingIpQuota":0,"securityGroupQuota":0,"ramQuota":0,"cpuQuota":0};
 var volumeAlert=false;
 var instanceAlert=false;
 var securityGroupAlert=false;
 var FloatingIpAlert=false;
-
+var RamAlert=false;
+var cpuAlert=false;
 function fetchInfoForHomePage(req,res){
 
     Sync(function() {
@@ -238,6 +239,7 @@ function fetchInfoForHomePage(req,res){
 
         var securityGroupList=totalSecurityGroup.sync();
 
+
         // var maxFloationIps=3;
         //
         // var maxSecurityGroups=3;
@@ -274,13 +276,46 @@ function fetchInfoForHomePage(req,res){
             }
         }
 
+
+        //RAM usage
+        var ramMaxLimit=(maxServerDetail.quota_set.ram.limit)/1024;
+        var ramUsed=(maxServerDetail.quota_set.ram.in_use)/1024;
+
+        if(jsonAllQuota["ramQuota"]!=ramMaxLimit) {
+            jsonAllQuota["ramQuota"]=ramMaxLimit;
+
+            if (ramUsed >= ramMaxLimit - 1) {
+                RamAlert = true;
+                emailAlert("WARNING ALERT!!!! Please add more Ram or Release Memory ");
+            }else{
+                RamAlert = false;
+            }
+        }
+
+        //CPU Usage
+        var cpuMaxLimit=maxServerDetail.quota_set.cores.limit;
+        var cpuUsed=maxServerDetail.quota_set.cores.in_use;
+        if(jsonAllQuota["cpuQuota"]!=cpuMaxLimit) {
+            jsonAllQuota["cpuQuota"]=cpuMaxLimit;
+
+            if (cpuUsed >= cpuMaxLimit - 1) {
+                cpuAlert = true;
+                emailAlert("WARNING ALERT!!!! Please add more CPUs or Release CPU ");
+            }else{
+                cpuAlert = false;
+            }
+        }
+
         var volumes=[{"Volume":"Used", "count":volumesList.length},{"Volume":"Unused", "count": limits.body.quota_set.volumes-volumesList.length+1}];
         var floatingPoints=[{"FloatingPoints":"Used", "count": FloatingIplength},{"FloatingPoints":"Unused", "count": maxFloationIps-FloatingIplength}];
         var securityGroup=[{"securityGroup":"Used","count":count },{"securityGroup":"Unused","count":maxSecurityGroups-count }];
         var instance=[{"instanceList":"Used","count":serverList.length},{"instanceList":"Unused","count":maxServer-serverList.length}];
+        var ram=[{"ram":"Used (GB)","count":ramUsed},{"ram":"Unused (GB)","count":ramMaxLimit-ramUsed}];
+        var cpu=[{"cpu":"Used(core)","count":cpuUsed},{"cpu":"Unused (Core)","count":cpuMaxLimit-cpuUsed}];
+
         res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,
             "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,
-            "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance});
+            "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance,"ram":ram, "cpu":cpu });
 
     });
 
