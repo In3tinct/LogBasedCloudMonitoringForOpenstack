@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const stripAnsi = require('strip-ansi');
 var Sync = require('sync');
+var request = require('request');
+
+
 
 var elasticsearch = require('elasticsearch');
 
@@ -64,7 +67,15 @@ function fetchHorizonip(req,res){
                 jsonObject = {"timestamp": timestamp, "ip": ip};
                 lastTenLogin.push(jsonObject);
             }
-            res.send({"lastTenLogin":lastTenLogin});
+
+            //Not synchronous for now
+            request('https://freegeoip.net/json/'+lastTenLogin[0].ip, function (error, response, body) {
+                console.log('error:', error); // Print the error if one occurred
+                console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                console.log('body:', body); // Print the HTML for the Google homepage.
+                res.send({"lastTenLogin":lastTenLogin,"geolocation":JSON.parse(body)});
+            });
+
         }, function (error) {
             console.trace(error.message);
         });
