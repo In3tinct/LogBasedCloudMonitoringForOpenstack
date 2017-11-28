@@ -42,23 +42,23 @@ function fetchNeutronLogs(req,res){
     var component=req.body.component;
     var date=req.body.date;
     var level=req.body.level;
-
-    console.log("Devanjal" +level);
+    var uuid=level.split("-");
+    console.log("Devanjal" +uuid[uuid.length-1]);
 
     var index=component+'index-'+date;
-    var q_value="";
-    if(level=="TRACE"){
-        q_value="message:*"+level+"*";
-    }
-    else {
-        q_value="message:*m" + level + "*";
-    }
+    var q_value="message:*"+uuid[uuid.length-1]+"*";
+    // if(level=="TRACE"){
+    //     q_value="message:*"+level+"*";
+    // }
+    // else {
+    //     q_value="message:*m" + level + "*";
+    // }
     console.log(index);
     client.search({
         index: index,
         q:q_value,
         sort: '@timestamp:desc',
-        size: '10',
+        size: '50',
         pretty: true
     }).then(function (body) {
         var hits=body.hits.hits;
@@ -74,12 +74,23 @@ function fetchNeutronLogs(req,res){
             var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
             var timestamp=hits[i]._source.timestamp;
 
-            jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
-            resultForCommontable.push(jsonObject);
+            if(loglevel==="TRACE") {
+                jsonObject = {"timestamp": timestamp, "loglevel": loglevel, "message": message};
+                resultForCommontable.push(jsonObject);
+
+                //Deleting old entries, as we only want to keep this table of length 10
+                // if (resultForErrorsTable.length > 10) {
+                //     resultForErrorsTable.shift();
+                // }
+            }
+            //else
+
+           // jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
+           // resultForCommontable.push(jsonObject);
         }
 
-       // Since i was getting unicode and ansi code characters with the message i am striping those
-       // so we can show only the ascii characters on the UI
+        // Since i was getting unicode and ansi code characters with the message i am striping those
+        // so we can show only the ascii characters on the UI
         console.log(stripAnsi(hits));
         console.log("Successful");
         res.send({"commontable":resultForCommontable});
@@ -93,9 +104,9 @@ function fetchNeutronLogs(req,res){
 exports.fetchNeutronLogs=fetchNeutronLogs;
 
 
-function search(req,res){
+function trace(req,res){
     if(req.session.user) {
-    res.render("search",{username:"abc"});
+        res.render("trace",{username:"abc"});
     }
     else{
         res.redirect("/login");
@@ -103,4 +114,4 @@ function search(req,res){
 }
 
 
-exports.search=search;
+exports.traceLog=trace;

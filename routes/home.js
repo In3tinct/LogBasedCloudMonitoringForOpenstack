@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const stripAnsi = require('strip-ansi');
-var request = require('request')
+var request = require('request');
+var nodemailer = require('nodemailer');
 var Sync = require('sync');
 
 //Api for openstack nova, blockstorage etc.
@@ -177,6 +178,13 @@ function infoMessages(serversList,callback){
 //from the time when server was started
 
 
+var jsonAllQuota={"volumeQuota":0,"instanceQuota":0,"floatingIpQuota":0,"securityGroupQuota":0,"ramQuota":0,"cpuQuota":0};
+var volumeAlert=false;
+var instanceAlert=false;
+var securityGroupAlert=false;
+var FloatingIpAlert=false;
+var RamAlert=false;
+var cpuAlert=false;
 function fetchInfoForHomePage(req,res){
 
     Sync(function() {
@@ -191,24 +199,34 @@ function fetchInfoForHomePage(req,res){
         var volumesList=totalVolumesUsed.sync();
 
         //Limit check for Volumes
-        var volumeAlert=false;
-        if(volumesList.length==limits.body.quota_set.volumes-1){
-            volumeAlert=true;
-        }else{
-            volumeAlert=false;
+
+        if(jsonAllQuota["volumeQuota"]!=limits.body.quota_set.volumes) {
+            jsonAllQuota["volumeQuota"]=limits.body.quota_set.volumes;
+
+            if (volumesList.length >= limits.body.quota_set.volumes - 1) {
+                volumeAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release volumes or increase the volume quota");
+            } else {
+                volumeAlert = false;
+            }
         }
 
         //Limit check for instances, Need to remove the hardcoding
-        var instanceAlert=false;
+
       //  var maxServer=4;
         var maxServerDetail=maxInstanceLimt.sync(null,keystonetoken);
 
         var maxServer=maxServerDetail.quota_set.instances.limit;
 
-        if(serverList.length==maxServer-1){
-            instanceAlert=true;
-        }else{
-            instanceAlert=false;
+        if(jsonAllQuota["instanceQuota"]!=maxServer) {
+            jsonAllQuota["instanceQuota"]=maxServer;
+
+            if (serverList.length >= maxServer - 1) {
+                instanceAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release instances or increase the instance quota");
+            } else {
+                instanceAlert = false;
+            }
         }
 
         var FloatingIplength=floatingIps.sync(null,keystonetoken);
@@ -221,6 +239,7 @@ function fetchInfoForHomePage(req,res){
 
         var securityGroupList=totalSecurityGroup.sync();
 
+
         // var maxFloationIps=3;
         //
         // var maxSecurityGroups=3;
@@ -230,21 +249,72 @@ function fetchInfoForHomePage(req,res){
                 count++;
             }
         }
-        var securityGroupAlert = false;
-        if(count>=maxSecurityGroups-1) {
-            securityGroupAlert=true;
-        }
-        var FloatingIpAlert=false;
 
-        if(FloatingIplength>=maxFloationIps-1) FloatingIpAlert =true;
+
+        if(jsonAllQuota["securityGroupQuota"]!=maxSecurityGroups) {
+
+            jsonAllQuota["securityGroupQuota"]=maxSecurityGroups;
+            if (count >= maxSecurityGroups - 1) {
+                securityGroupAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release Security Groups or increase the quota for Security Groups");
+            }else{
+                securityGroupAlert = false;
+            }
+        }
+
+
+
+        if(jsonAllQuota["floatingIpQuota"]!=maxFloationIps) {
+            jsonAllQuota["floatingIpQuota"]=maxFloationIps;
+
+            if (FloatingIplength >= maxFloationIps - 1) {
+                FloatingIpAlert = true;
+                emailAlert("WARNING ALERT!!!! Please release Floating IPs or increase the quota for Floating IPs");
+            }else{
+                FloatingIpAlert = false;
+            }
+        }
+
+
+        //RAM usage
+        var ramMaxLimit=(maxServerDetail.quota_set.ram.limit)/1024;
+        var ramUsed=(maxServerDetail.quota_set.ram.in_use)/1024;
+
+        if(jsonAllQuota["ramQuota"]!=ramMaxLimit) {
+            jsonAllQuota["ramQuota"]=ramMaxLimit;
+
+            if (ramUsed >= ramMaxLimit - 5) {
+                RamAlert = true;
+                emailAlert("WARNING ALERT!!!! Please add more Ram or Release Memory ");
+            }else{
+                RamAlert = false;
+            }
+        }
+
+        //CPU Usage
+        var cpuMaxLimit=maxServerDetail.quota_set.cores.limit;
+        var cpuUsed=maxServerDetail.quota_set.cores.in_use;
+        if(jsonAllQuota["cpuQuota"]!=cpuMaxLimit) {
+            jsonAllQuota["cpuQuota"]=cpuMaxLimit;
+
+            if (cpuUsed >= cpuMaxLimit - 1) {
+                cpuAlert = true;
+                emailAlert("WARNING ALERT!!!! Please add more CPUs or Release CPUs ");
+            }else{
+                cpuAlert = false;
+            }
+        }
 
         var volumes=[{"Volume":"Used", "count":volumesList.length},{"Volume":"Unused", "count": limits.body.quota_set.volumes-volumesList.length+1}];
         var floatingPoints=[{"FloatingPoints":"Used", "count": FloatingIplength},{"FloatingPoints":"Unused", "count": maxFloationIps-FloatingIplength}];
         var securityGroup=[{"securityGroup":"Used","count":count },{"securityGroup":"Unused","count":maxSecurityGroups-count }];
         var instance=[{"instanceList":"Used","count":serverList.length},{"instanceList":"Unused","count":maxServer-serverList.length}];
+        var ram=[{"ram":"Used (GB)","count":ramUsed},{"ram":"Unused (GB)","count":ramMaxLimit-ramUsed}];
+        var cpu=[{"cpu":"Used(core)","count":cpuUsed},{"cpu":"Unused (Core)","count":cpuMaxLimit-cpuUsed}];
+
         res.send({"infoMessageForHomePage": infoMessageForHomePage,"volumeAlert":volumeAlert, "instanceAlert":instanceAlert,
-            "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,
-            "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance});
+            "FloatingIpAlert":FloatingIpAlert, "securityGroupAlert":securityGroupAlert,"RamAlert":RamAlert, "cpuAlert":cpuAlert,
+            "volumes":volumes, "floatingPoints":floatingPoints, "securityGroup":securityGroup, "instance":instance,"ram":ram, "cpu":cpu });
 
     });
 
@@ -448,7 +518,23 @@ function maxInstanceLimt(keystoneToken, callback){
     })
 
 }
+function emailAlert(emailMessage){
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'alertopenstack@gmail.com',
+            pass: '6692331052'
+        }
+    });
 
+    console.log(emailMessage);
+    transporter.sendMail({
+        from: 'alertopenstack',
+        to: 'devanjal@gmail.com',
+        subject: 'Alert',
+        text:emailMessage
+    });
+}
 
 function home(req,res){
 
@@ -458,6 +544,24 @@ function home(req,res){
     else{
         res.redirect("/login");
     }
+}
+
+function emailWarning(emailId){
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'alertopenstack@gmail.com',
+            pass: '6692331052'
+        }
+    });
+
+  //  console.log(emailId);
+    transporter.sendMail({
+        from: 'alertopenstack',
+        to: 'devanjal@gmail.com',
+        subject: 'Alert',
+        text:emailId
+    });
 }
 
 
