@@ -46,10 +46,17 @@ function fetchNeutronLogs(req,res){
     console.log("Devanjal" +level);
 
     var index=component+'index-'+date;
+    var q_value="";
+    if(level=="TRACE"){
+        q_value="message:*"+level+"*";
+    }
+    else {
+        q_value="message:*m" + level + "*";
+    }
     console.log(index);
     client.search({
         index: index,
-        q:"message:*m"+level+"*",
+        q:q_value,
         sort: '@timestamp:desc',
         size: '10',
         pretty: true
@@ -66,16 +73,6 @@ function fetchNeutronLogs(req,res){
             var loglevel=strippedMessage.substr(0,strippedMessage.indexOf(' '));
             var message=strippedMessage.substr(strippedMessage.indexOf(' ')+1);
             var timestamp=hits[i]._source.timestamp;
-
-            // if(loglevel==="ERROR" || loglevel==="WARNING"){
-            //     jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
-            //     resultForErrorsTable.push(jsonObject);
-            //
-            //     //Deleting old entries, as we only want to keep this table of length 10
-            //     if (resultForErrorsTable.length>10){
-            //         resultForErrorsTable.shift();
-            //     }
-            // }
 
             jsonObject={"timestamp":timestamp, "loglevel":loglevel, "message":message};
             resultForCommontable.push(jsonObject);
