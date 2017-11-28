@@ -27,6 +27,10 @@ app.controller('homeController',function($scope,$http) {
         window.location.assign("/ip");
     };
 
+    $scope.navigateToCinder=function() {
+        window.location.assign("/cinder");
+    };
+
     $http({
         method : "GET",
         url : "/fetchInfoForHomePage"

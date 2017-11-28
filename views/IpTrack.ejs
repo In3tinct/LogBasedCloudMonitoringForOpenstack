@@ -213,30 +213,6 @@
             </div>
         </nav>
 
-        <div ng-controller="ipController">
-        <div id="map" style="width:400px;height:400px;background:yellow" ng-model="toggle" ng-show="{{toggle}}"></div>
-        </div>
-        <script>
-            function showOnMap(elem){
-
-                var a=elem.id;
-                var b=elem.name;
-
-                var mapOptions = {
-                    center: new google.maps.LatLng(a, b),
-                    zoom: 10,
-                    mapTypeId: google.maps.MapTypeId.HYBRID
-                }
-                var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-            }
-
-
-            function myMap() {
-
-            }
-        </script>
-
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqZ1zm12b2ASI_2XyYm2qFIAtAUgGqYDU&callback=myMap"></script>
 
         <h3>   Last 10 Login Details</h3>
         <div class="container" ng-controller="ipController">
@@ -264,6 +240,30 @@
         </div>
 
 
+        <div ng-controller="ipController">
+            <div id="map" style="width:400px;height:400px;background:yellow" ng-model="toggle" ng-show="{{toggle}}"></div>
+        </div>
+        <script>
+            function showOnMap(elem){
+
+                var a=elem.id;
+                var b=elem.name;
+
+                var mapOptions = {
+                    center: new google.maps.LatLng(a, b),
+                    zoom: 10,
+                    mapTypeId: google.maps.MapTypeId.HYBRID
+                }
+                var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            }
+
+
+            function myMap() {
+
+            }
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqZ1zm12b2ASI_2XyYm2qFIAtAUgGqYDU&callback=myMap"></script>
 
 
 
