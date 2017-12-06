@@ -23,14 +23,19 @@ Apart from our basic feature of continous monitoring of the componenets, Our app
 
 Frameworks and Tools used 
 
-- A Ubuntu 16 Linux Box. 
-- Openstack Cloud platform.
+- A Ubuntu 16 Linux Box with 32GB of RAM
+- Openstack Cloud platform, Version- Newton
 
 Technologies
 - Bootstrap - Framework for creating a cross platform user friendly UI
-- Node.js and Angular.js - Web application development Javascript Framework.
+- Node.js v6.11.3 and Angular.js v1 - Web application development Javascript Framework.
 - Logstash - Fetching the logs, parsing it, filtering the data and passing it to elasticsearch. 
 - Elasticsearch - Storing the Log files data in its indexed database and for searching the logs with its search query API. 
 also daily indexes are created for each day for different componenets.
+
+Running the project
+Import the project in any of the IDE capable of running node.js, Right click on app.js and start the server.
+by default the application runs on port 3000
+http://localhost:3000/
 
 
