@@ -11,7 +11,7 @@ app.controller('ipController',function($scope,$http) {
             //alert(data.geolocation.ip);
             $scope.data=data;
         })
-    }, 5000);
+    }, 2000);
 
     $scope.toggle=toggle;
 
