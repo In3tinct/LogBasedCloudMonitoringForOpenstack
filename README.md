@@ -27,7 +27,7 @@ Frameworks and Tools used
 - Openstack Cloud platform.
 
 Technologies
-- Bootstrap - Framework for creating a user friendly UI
+- Bootstrap - Framework for creating a cross platform user friendly UI
 - Node.js and Angular.js - Web application development Javascript Framework.
 - Logstash - Fetching the logs, parsing it, filtering the data and passing it to elasticsearch. 
 - Elasticsearch - Storing the Log files data in its indexed database and for searching the logs with its search query API. 
