@@ -21,6 +21,12 @@ Apart from our basic feature of continous monitoring of the componenets, Our app
 
 5) Logging the new instances created along with the private IP's assigned to them. 
 
+6) A Dashboard with different quota limits like no. of instances used, Volume used, VCPU used, RAM used. 
+
+7) Warnings are generated and displayed on the home screen if the quota is about to get filled which would warn 
+the Administrator and the quotas can be managed or increased, avoiding user inconvience which may arise while creating 
+instances.
+
 Frameworks and Tools used 
 
 - A Ubuntu 16 Linux Box with 32GB of RAM
@@ -34,8 +40,11 @@ Technologies
 also daily indexes are created for each day for different componenets.
 
 Running the project
-Import the project in any of the IDE capable of running node.js, Right click on app.js and start the server.
+-Import the project in any of the IDE capable of running node.js. 
+-Update the modules using npm update, run npm update in the same directory as your package.json file 
+the packages will confer to version mentioned in package.json
+-Right click on app.js and start the server.
 by default the application runs on port 3000
-http://localhost:3000/
+-Visit http://localhost:3000/
 
 
