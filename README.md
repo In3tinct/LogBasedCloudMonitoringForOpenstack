@@ -40,6 +40,7 @@ Technologies
 also daily indexes are created for each day for different componenets.
 
 Running the project
+
 -Import the project in any of the IDE capable of running node.js. 
 -Update the modules using npm update, run npm update in the same directory as your package.json file 
 the packages will confer to version mentioned in package.json
