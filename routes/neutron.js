@@ -32,7 +32,7 @@ function fetchTracecLogsForNeutron(index,callback){
     process.nextTick(function() {
         client.search({
             index: index,
-            q: '*TRACE*',
+            q: '*ERROR*',
             sort: '@timestamp:desc',
             size: '10',
             pretty: true

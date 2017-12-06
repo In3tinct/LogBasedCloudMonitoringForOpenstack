@@ -10,7 +10,7 @@ app.controller('neutronController',function($scope,$http) {
         }).success(function(data){
             $scope.data=data;
         })
-    }, 5000);
+    }, 2000);
 
 });
 
