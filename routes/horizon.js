@@ -47,7 +47,7 @@ function fetchHorizonip(req,res){
         console.log(index);
         client.search({
             index: index,
-            q: '*23cd5c37c7e44d068fe1601d1635473b',
+            q: '*/identity_v2_admin/v3/auth/tokens',
             sort: '@timestamp:desc',
             size: '10',
             pretty: true
